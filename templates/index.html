@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Study - Consent Form</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>INFORMED CONSENT FORM</h1>
+        
+        <div class="study-description">
+            <h2>Research Study Participation</h2>
+            <p>
+                You are being asked to participate in a research project entitled: <strong>The effect of simulated visual snow on an object search task</strong>
+            </p>
+            <p>
+                We are conducting this research study to better understand if visual snow has an effect on visual search performance.
+            </p>
+            <p>
+                In the experiment you will be asked to find the five objects within a complex visual field. Once the objects are found, or you choose to stop participating in the task, you will be asked to go to the next page where you will be asked to answer questions about how you felt during the task. The total time for this experiment should take approximately five minutes, and at most, ten minutes.
+            </p>
+            <p>
+                This research is being conducted by senior psychology major Ashley Rabbitt, and Dr. Jenks.
+            </p>
+            <p>
+                The experiment is anonymous - no identifying information will be recorded from the participants. The experiment is conducted online, through an encrypted website.
+            </p>
+            <p>
+                The benefit from participating in this experiment is gaining credit through the research pool if you are taking PSY 101 at RSC. You will also gain experience in being a research participant.
+            </p>
+            <p>
+                Potential risks of participating in this experiment include being bored while taking the experiment, potential stress from participating in the task. There is always a possibility of a potential security breach even in a fire-walled, encrypted website.
+            </p>
+            <p>
+                If you are under the age of 18 you are not allowed to participate in this study. If you would like to participate in this experiment, you must be at least 18 years old or older.
+            </p>
+            
+            <h3>Task Instructions</h3>
+            <div class="study-instructions-detail">
+                <p><strong>Objective:</strong> Locate 5 target objects in an image by clicking on them.</p>
+                
+                <h4>Task Procedure:</h4>
+                <ul>
+                    <li>You will be presented with an image containing various objects</li>
+                    <li>Your task is to locate and click on 5 specific target objects</li>
+                    <li>The target objects will be clearly listed for reference</li>
+                    <li>Click directly on objects in the image when you identify them</li>
+                    <li>Response time will be recorded throughout the task</li>
+                </ul>
+                
+                <h4>Scoring:</h4>
+                <ul>
+                    <li><strong>+1 point</strong> for each correct object you find</li>
+                    <li><strong>-1 point</strong> for each incorrect click</li>
+                    <li>Your goal is to identify all 5 objects with maximum accuracy</li>
+                </ul>
+                
+                <h4>Visual Conditions:</h4>
+                <p>The image may appear with or without visual effects. Please do your best to identify the target objects regardless of image presentation.</p>
+            </div>
+            
+            <h3>Consent and Contact Information</h3>
+            <p>
+                By clicking the consent checkbox below, you understand that participation is voluntary, and that you may at any time during the course of the task revoke consent and withdraw from the study without any penalty.
+            </p>
+            <p>
+                Your consent also indicates that you understand that you have been given an opportunity to read this Agreement, to ask questions concerning the study and that any such questions have been answered to your full and complete satisfaction.
+            </p>
+            <p>
+                This research has received the approval of Russell Sage College Institutional Review Board, which functions to insure the protection of the rights of human participants. If you, as a participant, have any complaints about this study, please contact:
+            </p>
+            <div style="margin-left: 20px; margin-bottom: 15px;">
+                <strong>Dr. Theresa Hand</strong><br>
+                Provost<br>
+                Russell Sage College<br>
+                65 1st Street<br>
+                Troy, New York 12180<br>
+                518-244-2069<br>
+                handt@sage.edu
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="error-message">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('proceed_to_study') }}">
+            <div class="consent-section">
+                <label class="consent-label">
+                    <input type="checkbox" name="consent" id="consent" required>
+                    I, having full capacity to consent, do hereby volunteer to participate in this research study. I have read and understood the information above and voluntarily consent to participate.
+                </label>
+            </div>
+            
+            <button type="submit" class="proceed-button">Proceed to Study</button>
+        </form>
+    </div>
+</body>
+</html>

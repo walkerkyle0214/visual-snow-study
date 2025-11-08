@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Study</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Research Study</h1>
+        
+        <div class="study-content">
+            <p class="welcome-message">
+                Thank you for consenting to participate in our research study. 
+                Please examine the image below and find the hidden objects.
+            </p>
+            
+            <div class="study-section">
+                <h3>Visual Search Task</h3>
+                
+                <div class="study-status-bar">
+                    <div class="timer" id="timer">Time: 00:00</div>
+                    <div class="score" id="score">Score: 0</div>
+                    <div class="objects-remaining" id="objectsRemaining">Objects to find: 5</div>
+                </div>
+                
+                <div class="target-objects-compact">
+                    <h4>Target Objects - Locate and click on these items:</h4>
+                    <div id="targetObjects" class="target-list">
+                        <p>Loading target objects...</p>
+                    </div>
+                </div>
+                
+                <div class="study-instructions">
+                    <p>Task instructions will be provided here for the specific objects to locate.</p>
+                </div>
+                
+                <div class="image-container">
+                    <div class="coordinates-display" id="coordinates" style="display: none;">
+                        Click on objects in the image
+                    </div>
+                    
+                    <!-- Hidden radio buttons and sliders - functionality preserved but not visible -->
+                    <div style="display: none;">
+                        <input type="radio" name="imageMode" value="normal" checked id="normalMode">
+                        <input type="radio" name="imageMode" value="tinted" id="tintedMode">
+                        <input type="range" id="brightnessSlider" min="0.3" max="1.5" step="0.1" value="0.6">
+                        <input type="range" id="noiseSlider" min="0.1" max="1.5" step="0.1" value="1.5">
+                        <span id="brightnessValue">0.6</span>
+                        <span id="noiseValue">1.5</span>
+                    </div>
+                    
+                    <div class="image-wrapper">
+                        <!-- Image Reveal Overlay - now inside image wrapper -->
+                        <div class="image-reveal-overlay" id="imageRevealOverlay">
+                            <div class="reveal-content">
+                                <h3>Begin Visual Search Task</h3>
+                                <p>Click the button below to reveal the image and begin the study.</p>
+                                <p><strong>Instructions:</strong> Locate the target objects listed above by clicking on them in the image.</p>
+                                <button class="reveal-btn" id="revealBtn">Begin Task</button>
+                            </div>
+                        </div>
+                        
+                        <img src="{{ url_for('static', filename='images/Computer_Room_Desk_2008.jpg') }}" 
+                             alt="Computer room desk scene for visual search task" 
+                             class="study-image"
+                             id="gameImage"
+                             data-normal-src="{{ url_for('static', filename='images/Computer_Room_Desk_2008.jpg') }}"
+                             data-noisy-src="{{ url_for('static', filename='images/Computer_Room_Desk_2008_noisy.jpg') }}">
+                        
+                        <svg class="polygon-overlay" id="polygonSvg">
+                            <g id="storedPolygons"></g>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Hidden found objects section for backward compatibility -->
+                <div id="foundObjects" style="display: none;"></div>
+            </div>
+                
+                <!-- Task Complete Modal -->
+                <div class="modal-overlay" id="gameCompleteModal" style="display: none;">
+                    <div class="modal-content">
+                        <h2>Task Complete</h2>
+                        <div class="final-stats">
+                            <div class="final-time" id="finalTime"></div>
+                            <div class="final-score" id="finalScore"></div>
+                            <div class="clicks-summary" id="clicksSummary"></div>
+                        </div>
+                        
+                        <!-- Post-Study Questionnaire -->
+                        <div class="post-study-questions">
+                            <h3>Post-Study Questions</h3>
+                            <p>Please rate how much you agree with each statement about your experience:</p>
+                            
+                            <div class="likert-questions">
+                                <div class="likert-question">
+                                    <label>I felt frustrated while completing the activity</label>
+                                    <div class="likert-scale">
+                                        <input type="radio" name="frustrated" value="1" id="frustrated1" required>
+                                        <label for="frustrated1">1 - Strongly Disagree</label>
+                                        <input type="radio" name="frustrated" value="2" id="frustrated2">
+                                        <label for="frustrated2">2 - Disagree</label>
+                                        <input type="radio" name="frustrated" value="3" id="frustrated3">
+                                        <label for="frustrated3">3 - Neither</label>
+                                        <input type="radio" name="frustrated" value="4" id="frustrated4">
+                                        <label for="frustrated4">4 - Agree</label>
+                                        <input type="radio" name="frustrated" value="5" id="frustrated5">
+                                        <label for="frustrated5">5 - Strongly Agree</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="likert-question">
+                                    <label>I felt challenged while completing the activity</label>
+                                    <div class="likert-scale">
+                                        <input type="radio" name="challenged" value="1" id="challenged1" required>
+                                        <label for="challenged1">1 - Strongly Disagree</label>
+                                        <input type="radio" name="challenged" value="2" id="challenged2">
+                                        <label for="challenged2">2 - Disagree</label>
+                                        <input type="radio" name="challenged" value="3" id="challenged3">
+                                        <label for="challenged3">3 - Neither</label>
+                                        <input type="radio" name="challenged" value="4" id="challenged4">
+                                        <label for="challenged4">4 - Agree</label>
+                                        <input type="radio" name="challenged" value="5" id="challenged5">
+                                        <label for="challenged5">5 - Strongly Agree</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="likert-question">
+                                    <label>I felt happy while completing the activity</label>
+                                    <div class="likert-scale">
+                                        <input type="radio" name="happy" value="1" id="happy1" required>
+                                        <label for="happy1">1 - Strongly Disagree</label>
+                                        <input type="radio" name="happy" value="2" id="happy2">
+                                        <label for="happy2">2 - Disagree</label>
+                                        <input type="radio" name="happy" value="3" id="happy3">
+                                        <label for="happy3">3 - Neither</label>
+                                        <input type="radio" name="happy" value="4" id="happy4">
+                                        <label for="happy4">4 - Agree</label>
+                                        <input type="radio" name="happy" value="5" id="happy5">
+                                        <label for="happy5">5 - Strongly Agree</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="likert-question">
+                                    <label>I felt angry while completing the activity</label>
+                                    <div class="likert-scale">
+                                        <input type="radio" name="angry" value="1" id="angry1" required>
+                                        <label for="angry1">1 - Strongly Disagree</label>
+                                        <input type="radio" name="angry" value="2" id="angry2">
+                                        <label for="angry2">2 - Disagree</label>
+                                        <input type="radio" name="angry" value="3" id="angry3">
+                                        <label for="angry3">3 - Neither</label>
+                                        <input type="radio" name="angry" value="4" id="angry4">
+                                        <label for="angry4">4 - Agree</label>
+                                        <input type="radio" name="angry" value="5" id="angry5">
+                                        <label for="angry5">5 - Strongly Agree</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="likert-question">
+                                    <label>I felt upset while completing the activity</label>
+                                    <div class="likert-scale">
+                                        <input type="radio" name="upset" value="1" id="upset1" required>
+                                        <label for="upset1">1 - Strongly Disagree</label>
+                                        <input type="radio" name="upset" value="2" id="upset2">
+                                        <label for="upset2">2 - Disagree</label>
+                                        <input type="radio" name="upset" value="3" id="upset3">
+                                        <label for="upset3">3 - Neither</label>
+                                        <input type="radio" name="upset" value="4" id="upset4">
+                                        <label for="upset4">4 - Agree</label>
+                                        <input type="radio" name="upset" value="5" id="upset5">
+                                        <label for="upset5">5 - Strongly Agree</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="likert-question">
+                                    <label>I felt defeated while completing the activity</label>
+                                    <div class="likert-scale">
+                                        <input type="radio" name="defeated" value="1" id="defeated1" required>
+                                        <label for="defeated1">1 - Strongly Disagree</label>
+                                        <input type="radio" name="defeated" value="2" id="defeated2">
+                                        <label for="defeated2">2 - Disagree</label>
+                                        <input type="radio" name="defeated" value="3" id="defeated3">
+                                        <label for="defeated3">3 - Neither</label>
+                                        <input type="radio" name="defeated" value="4" id="defeated4">
+                                        <label for="defeated4">4 - Agree</label>
+                                        <input type="radio" name="defeated" value="5" id="defeated5">
+                                        <label for="defeated5">5 - Strongly Agree</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="likert-question">
+                                    <label>I felt content while completing the activity</label>
+                                    <div class="likert-scale">
+                                        <input type="radio" name="content" value="1" id="content1" required>
+                                        <label for="content1">1 - Strongly Disagree</label>
+                                        <input type="radio" name="content" value="2" id="content2">
+                                        <label for="content2">2 - Disagree</label>
+                                        <input type="radio" name="content" value="3" id="content3">
+                                        <label for="content3">3 - Neither</label>
+                                        <input type="radio" name="content" value="4" id="content4">
+                                        <label for="content4">4 - Agree</label>
+                                        <input type="radio" name="content" value="5" id="content5">
+                                        <label for="content5">5 - Strongly Agree</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="likert-question">
+                                    <label>I felt joyful while completing the activity</label>
+                                    <div class="likert-scale">
+                                        <input type="radio" name="joyful" value="1" id="joyful1" required>
+                                        <label for="joyful1">1 - Strongly Disagree</label>
+                                        <input type="radio" name="joyful" value="2" id="joyful2">
+                                        <label for="joyful2">2 - Disagree</label>
+                                        <input type="radio" name="joyful" value="3" id="joyful3">
+                                        <label for="joyful3">3 - Neither</label>
+                                        <input type="radio" name="joyful" value="4" id="joyful4">
+                                        <label for="joyful4">4 - Agree</label>
+                                        <input type="radio" name="joyful" value="5" id="joyful5">
+                                        <label for="joyful5">5 - Strongly Agree</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="yes-no-questions">
+                                <h4>Additional Questions</h4>
+                                
+                                <div class="yes-no-question">
+                                    <label>Have you ever heard of visual snow?</label>
+                                    <div class="yes-no-options">
+                                        <input type="radio" name="heardVisualSnow" value="yes" id="heardYes" required>
+                                        <label for="heardYes">Yes</label>
+                                        <input type="radio" name="heardVisualSnow" value="no" id="heardNo">
+                                        <label for="heardNo">No</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="yes-no-question">
+                                    <label>Do you have visual snow?</label>
+                                    <div class="yes-no-options">
+                                        <input type="radio" name="haveVisualSnow" value="yes" id="haveYes" required>
+                                        <label for="haveYes">Yes</label>
+                                        <input type="radio" name="haveVisualSnow" value="no" id="haveNo">
+                                        <label for="haveNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="username-form">
+                            <label for="usernameInput">Enter your username:</label>
+                            <input type="text" id="usernameInput" placeholder="Your username" maxlength="50">
+                            <div class="modal-buttons">
+                                <button id="submitScore" class="submit-btn">Submit Data</button>
+                                <button onclick="location.reload()" class="restart-btn">Restart Task</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="study-footer">
+                <p>Thank you for your participation. If you have any questions about this study, please contact the research team.</p>
+                <a href="{{ url_for('homepage') }}" class="back-link">Return to Homepage</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pass server data to JavaScript
+        window.storedCoordinates = {{ stored_coordinates | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/study.js') }}"></script>
+</body>
+</html>

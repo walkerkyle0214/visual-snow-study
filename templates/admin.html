@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Study Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin - Study Results 
+            <a href="{{ url_for('admin_logout') }}" style="font-size: 14px; color: #e74c3c; text-decoration: none; float: right; margin-top: 5px;">Logout</a>
+        </h1>
+        
+        <div class="admin-navigation">
+            <button class="nav-btn" id="coordsNavBtn">Coordinate Management</button>
+            <button class="nav-btn active" id="resultsNavBtn">Study Results</button>
+        </div>
+        
+        <div class="admin-controls" id="coordsSection" style="display: none;">
+            <div class="polygon-sets-section">
+                <h3>Polygon Sets Management</h3>
+                <div class="set-controls">
+                    <input type="text" id="setName" placeholder="Enter set name..." style="margin-right: 10px; padding: 8px;">
+                    <input type="text" id="setDescription" placeholder="Description (optional)" style="margin-right: 10px; padding: 8px;">
+                    <button class="control-btn" id="saveSetBtn">Save Current as Set</button>
+                    <button class="control-btn" id="refreshSetsBtn">Refresh Sets</button>
+                </div>
+                <div class="saved-sets" id="savedSets">
+                    <h4>Saved Polygon Sets:</h4>
+                    <div id="setsContainer"></div>
+                </div>
+            </div>
+            
+            <div class="mode-controls">
+                <label class="mode-toggle">
+                    <input type="checkbox" id="modeToggle">
+                    Overlay Mode (View stored coordinates)
+                </label>
+                <button class="control-btn" id="clearAllBtn">Clear All Coordinates</button>
+                <a href="{{ url_for('study') }}" class="control-btn" target="_blank">Open Study Page</a>
+            </div>
+        </div>
+        
+        <div class="study-content" id="studyContent" style="display: none;">
+            <div class="game-section">
+                <h3>Object Coordinate Mapping</h3>
+                <p>Click on the image to create polygons marking objects. Use overlay mode to view stored coordinates.</p>
+                
+                <div class="image-container">
+                    <div class="coordinates-display" id="coordinates">
+                        Click to start drawing a polygon
+                    </div>
+                    <div class="polygon-info" id="polygonInfo">
+                        Polygon: Not set
+                    </div>
+                    <div class="controls">
+                        <button class="control-btn" id="clearBtn">Clear Current</button>
+                        <button class="control-btn" id="finishBtn" disabled>Finish Polygon</button>
+                    </div>
+                    <div class="image-wrapper">
+                        <img src="{{ url_for('static', filename='images/Computer_Room_Desk_2008.jpg') }}" 
+                             alt="Computer room desk scene for object mapping" 
+                             class="admin-image"
+                             id="gameImage">
+                        <svg class="polygon-overlay" id="polygonSvg">
+                            <polygon id="currentPolygon" points="" />
+                            <g id="storedPolygons"></g>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="stored-polygons">
+                    <h4>Stored Object Coordinates:</h4>
+                    <div id="polygonStorage"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Study Results Section -->
+        <div class="results-section" id="resultsSection">
+            <h3>Study Results</h3>
+            <div class="results-controls">
+                <button class="control-btn" id="loadResultsBtn">Load All Results</button>
+                <button class="control-btn" id="exportResultsBtn">Export as CSV</button>
+                <span class="results-count" id="resultsCount">No results loaded</span>
+            </div>
+            
+            <div class="results-filters">
+                <label>
+                    Filter by Image Mode:
+                    <select id="imageModeFilter">
+                        <option value="">All</option>
+                        <option value="normal">Normal</option>
+                        <option value="visual_snow">Visual Snow</option>
+                    </select>
+                </label>
+                <label>
+                    Search Username:
+                    <input type="text" id="usernameFilter" placeholder="Enter username...">
+                </label>
+            </div>
+            
+            <div class="results-table-container">
+                <table class="results-table" id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Score</th>
+                            <th>Time (s)</th>
+                            <th>Clicks</th>
+                            <th>Found/Total</th>
+                            <th>Image Mode</th>
+                            <th>Timestamp</th>
+                            <th>Questionnaire</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                        <tr>
+                            <td colspan="9" class="no-results">Click "Load All Results" to view study data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pass server data to JavaScript
+        window.storedCoordinates = {{ stored_coordinates | tojson }};
+        window.polygonSets = {{ polygon_sets | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

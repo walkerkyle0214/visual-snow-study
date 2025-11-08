@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="admin-login">
+            <h2>Admin Access</h2>
+            
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="error-message">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST">
+                <input type="password" 
+                       name="password" 
+                       placeholder="Enter admin password" 
+                       required 
+                       autofocus>
+                <button type="submit" class="login-btn">Access Admin Panel</button>
+            </form>
+            
+            <p style="margin-top: 30px; color: #666; font-size: 14px;">
+                <a href="{{ url_for('homepage') }}" style="color: #3498db; text-decoration: none;">Back to Study</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
