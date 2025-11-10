@@ -92,16 +92,24 @@
             {% endif %}
         {% endwith %}
 
-        <form method="POST" action="{{ url_for('proceed_to_study') }}">
-            <div class="consent-section">
-                <label class="consent-label">
-                    <input type="checkbox" name="consent" id="consent" required>
-                    I, having full capacity to consent, do hereby volunteer to participate in this research study. I have read and understood the information above and voluntarily consent to participate.
-                </label>
+        {% if test_completed %}
+            <div class="completion-message">
+                <h3>Thank You!</h3>
+                <p>You have already completed this study. Thank you for your participation!</p>
+                <p>If you have any questions about this study, please contact the research team using the contact information provided above.</p>
             </div>
-            
-            <button type="submit" class="proceed-button">Proceed to Study</button>
-        </form>
+        {% else %}
+            <form method="POST" action="{{ url_for('proceed_to_study') }}">
+                <div class="consent-section">
+                    <label class="consent-label">
+                        <input type="checkbox" name="consent" id="consent" required>
+                        I, having full capacity to consent, do hereby volunteer to participate in this research study. I have read and understood the information above and voluntarily consent to participate.
+                    </label>
+                </div>
+                
+                <button type="submit" class="proceed-button">Proceed to Study</button>
+            </form>
+        {% endif %}
     </div>
 </body>
 </html>

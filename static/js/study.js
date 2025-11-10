@@ -171,7 +171,7 @@ submitScoreBtn.addEventListener('click', async function() {
     const username = usernameInput.value.trim();
     
     if (!username) {
-        alert('Please enter your username.');
+        alert('Please enter your ID.');
         usernameInput.focus();
         return;
     }
@@ -213,7 +213,7 @@ submitScoreBtn.addEventListener('click', async function() {
             submitScoreBtn.textContent = 'Submitted!';
             submitScoreBtn.style.background = '#4caf50';
             setTimeout(() => {
-                location.reload();
+                window.location.href = '/';
             }, 1500);
         } else {
             throw new Error('Failed to submit score');

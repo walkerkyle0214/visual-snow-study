@@ -75,7 +75,8 @@ def save_polygon_sets(polygon_sets_dict):
 
 @app.route('/')
 def homepage():
-    return render_template('index.html')
+    test_completed = session.get('test_completed', False)
+    return render_template('index.html', test_completed=test_completed)
 
 @app.route('/proceed', methods=['POST'])
 def proceed_to_study():
@@ -287,6 +288,10 @@ def submit_score():
         
         db.session.add(session)
         db.session.commit()
+        
+        # Mark test as completed in session
+        from flask import session as flask_session
+        flask_session['test_completed'] = True
         
         return jsonify({'success': True, 'message': 'Study data submitted successfully'})
     
